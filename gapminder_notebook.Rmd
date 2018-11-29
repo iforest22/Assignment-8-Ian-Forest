@@ -1,0 +1,60 @@
+#Assigment 8
+#Ian Forest
+
+#Initial package installation:
+ 
+install.packages("gapminder") 
+library(gapminder)
+
+install.packages("tidyverse")
+library(tidyverse)
+
+
+#demonstrating some basic plottingfunctions and how to attach a variable 
+data(gapminder)
+summary(gapminder)
+x <- mean(gapminder$gdpPercap)
+x
+
+attach(gapminder)
+median(pop)
+hist(lifeExp)
+hist(log(pop))
+boxplot(lifeExp ~ continent)
+plot(lifeExp ~ log(gdpPercap))
+
+
+#using dplyr on the gapminder dataset
+gapminder%>%
+  select(country, lifeExp) %>%
+  filter(country == "South Africa" |
+          country == "Ireland") %>% 
+  group_by(country) %>% 
+  summarise(Average_life = mean(lifeExp))
+
+
+#Performing t-test on lifeExp
+df1 <- gapminder%>%
+  select(country, lifeExp) %>%
+  filter(country == "South Africa" |
+           country == "Ireland")
+
+t.test(data = df1, lifeExp ~ country)
+
+
+#using ggplot to make graphs
+
+gapminder %>%
+  filter(gdpPercap < 50000) %>%
+  ggplot(aes(x = log(gdpPercap), y = lifeExp, col = continent, size = pop))+
+  geom_point(alpha=0.3)+
+  geom_smooth()
+
+gapminder %>%
+  filter(gdpPercap < 50000) %>%
+  ggplot(aes(x = log(gdpPercap), y = lifeExp, col = year, size = pop))+
+  geom_point(alpha=0.3)+
+  geom_smooth(method = lm)+
+  facet_wrap(~continent)
+
+summary(lm(lifeExp ~gdpPercap+pop))
